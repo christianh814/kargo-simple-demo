@@ -71,7 +71,7 @@ spec:
         namespace: argocd
         sources:
         - repoURL: ${{ vars.repoURL }}
-          desiredRevision: ${{ outputs.commit.commit }}
+          desiredRevision: ${{ task.outputs.commit.commit }}
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
