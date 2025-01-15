@@ -48,7 +48,7 @@ spec:
     as: build-manifests
     config:
       path: ./src/app/stages/${{ vars.targetBranch }}
-      outPath: ./dst/
+      outPath: ./dst/${{ vars.targetBranch }}.yaml
 
   - uses: git-commit
     as: commit
