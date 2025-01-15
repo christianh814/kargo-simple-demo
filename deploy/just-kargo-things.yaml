@@ -25,7 +25,6 @@ spec:
   - name: repoURL
   - name: sourceBranch
   - name: targetBranch
-  - name: image
 
   steps:
 
@@ -36,7 +35,7 @@ spec:
       checkout:
       - branch: ${{ vars.sourceBranch }}
         path: ./src
-      - branch: env/${{ vars.targetBranch }}
+      - branch: stage/${{ vars.targetBranch }}
         create: true
         path: ./dst
 
@@ -45,30 +44,24 @@ spec:
     config:
       path: ./dst
 
-  - uses: kustomize-set-image
-    as: update-image
-    config:
-      path: ./main/app/stages/${{ vars.targetBranch }}
-      images:
-      - image: ${{ vars.image }}
-
   - uses: kustomize-build
     as: build-manifests
     config:
-      path: ./${{ vars.sourceBranch }}/app/stages/${{ vars.targetBranch }}
+      path: ./src/app/stages/${{ vars.targetBranch }}
       outPath: ./dst/
 
   - uses: git-commit
     as: commit
     config:
-      path: ./dest
+      path: ./dst
       messageFromSteps:
-      - update-image
+      - build-manifests
+
   - uses: git-push
     as: push
     config:
       path: ./dst
-      targetBranch: env/${{ vars.targetBranch }}
+      targetBranch: stage/${{ vars.targetBranch }}
 
   - uses: argocd-update
     config:
@@ -102,8 +95,6 @@ spec:
         value: main
       - name: targetBranch
         value: test
-      - name: image
-        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
@@ -133,8 +124,6 @@ spec:
         value: main
       - name: targetBranch
         value: uat
-      - name: image
-        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
@@ -164,8 +153,6 @@ spec:
         value: main
       - name: targetBranch
         value: prod
-      - name: image
-        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
