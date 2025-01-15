@@ -48,7 +48,7 @@ spec:
   - uses: kustomize-set-image
     as: update-image
     config:
-      path: ./main/app/overlays/dev
+      path: ./main/app/overlays/${{ vars.targetBranch }}
       images:
       - image: ${{ vars.image }}
 
