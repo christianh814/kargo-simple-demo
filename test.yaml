@@ -19,3 +19,17 @@ spec:
       - image: christianh814/gobg:latest
         name: gobg
         resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gobg
+  name: gobg
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: gobg
