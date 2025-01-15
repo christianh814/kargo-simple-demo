@@ -95,19 +95,19 @@ spec:
       direct: true
   promotionTemplate:
     spec:
+      vars:
+      - name: repoURL
+        value: https://github.com/christianh814/kargo-simple-demo
+      - name: sourceBranch
+        value: main
+      - name: targetBranch
+        value: test
+      - name: image
+        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
-          as: promote-to-test
-          vars:
-          - name: repoURL
-            value: https://github.com/christianh814/kargo-simple-demo
-          - name: sourceBranch
-            value: main
-          - name: targetBranch
-            value: test
-          - name: image
-            value: ghcr.io/christianh814/kargo-demo-app
+        as: promote-to-test
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -126,19 +126,19 @@ spec:
       - test
   promotionTemplate:
     spec:
+      vars:
+      - name: repoURL
+        value: https://github.com/christianh814/kargo-simple-demo
+      - name: sourceBranch
+        value: main
+      - name: targetBranch
+        value: uat
+      - name: image
+        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
-          as: promote-to-uat
-          vars:
-          - name: repoURL
-            value: https://github.com/christianh814/kargo-simple-demo
-          - name: sourceBranch
-            value: main
-          - name: targetBranch
-            value: uat
-          - name: image
-            value: ghcr.io/christianh814/kargo-demo-app
+        as: promote-to-uat
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -157,16 +157,16 @@ spec:
       - uat
   promotionTemplate:
     spec:
+      vars:
+      - name: repoURL
+        value: https://github.com/christianh814/kargo-simple-demo
+      - name: sourceBranch
+        value: main
+      - name: targetBranch
+        value: prod
+      - name: image
+        value: ghcr.io/christianh814/kargo-demo-app
       steps:
       - task:
           name: default-promote
-          as: promote-to-prod
-          vars:
-          - name: repoURL
-            value: https://github.com/christianh814/kargo-simple-demo
-          - name: sourceBranch
-            value: main
-          - name: targetBranch
-            value: prod
-          - name: image
-            value: ghcr.io/christianh814/kargo-demo-app
+        as: promote-to-prod
