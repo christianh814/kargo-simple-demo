@@ -48,14 +48,14 @@ spec:
   - uses: kustomize-set-image
     as: update-image
     config:
-      path: ./main/app/overlays/${{ vars.targetBranch }}
+      path: ./main/app/stages/${{ vars.targetBranch }}
       images:
       - image: ${{ vars.image }}
 
   - uses: kustomize-build
     as: build-manifests
     config:
-      path: ./${{ vars.sourceBranch }}/app/overlays/${{ vars.targetBranch }}
+      path: ./${{ vars.sourceBranch }}/app/stages/${{ vars.targetBranch }}
       outPath: ./dst/
 
   - uses: git-commit
