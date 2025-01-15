@@ -64,6 +64,7 @@ spec:
       targetBranch: stage/${{ vars.targetBranch }}
 
   - uses: argocd-update
+    as: sync-argocd
     config:
       apps:
       - name: kargo-demo-${{ vars.targetBranch }}
