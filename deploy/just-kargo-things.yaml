@@ -16,6 +16,70 @@ spec:
       branch: main
 ---
 apiVersion: kargo.akuity.io/v1alpha1
+kind: PromotionTask
+metadata:
+  name: default-promote
+  namespace: kargo-demo
+spec:
+  vars:
+  - name: repoURL
+  - name: sourceBranch
+  - name: targetBranch
+  - name: image
+
+  steps:
+
+  - uses: git-clone
+    as: clone
+    config:
+      repoURL: ${{ vars.repoURL }}
+      checkout:
+      - branch: ${{ vars.sourceBranch }}
+        path: ./src
+      - branch: env/${{ vars.targetBranch }}
+        create: true
+        path: ./dst
+
+  - uses: git-clear
+    as: clear
+    config:
+      path: ./dst
+
+  - uses: kustomize-set-image
+    as: update-image
+    config:
+      path: ./main/app/overlays/dev
+      images:
+      - image: ${{ vars.image }}
+
+  - uses: kustomize-build
+    as: build-manifests
+    config:
+      path: ./${{ vars.sourceBranch }}/app/overlays/${{ vars.targetBranch }}
+      outPath: ./dst/
+
+  - uses: git-commit
+    as: commit
+    config:
+      path: ./dest
+      messageFromSteps:
+      - update-image
+  - uses: git-push
+    as: push
+    config:
+      path: ./dst
+      targetBranch: env/${{ vars.targetBranch }}
+
+  - uses: argocd-update
+    config:
+      apps:
+      - name: kargo-demo-${{ vars.targetBranch }}
+        namespace: argocd
+        sources:
+        - repoURL: ${{ vars.repoURL }}
+          desiredRevision: ${{ outputs.commit.commit }}
+---
+apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: test
@@ -29,13 +93,21 @@ spec:
       name: kargo-demo
     sources:
       direct: true
-  promotionMechanisms:
-    gitRepoUpdates:
-    - repoURL: https://github.com/christianh814/kargo-simple-demo
-      writeBranch: stage/test
-    argoCDAppUpdates:
-    - appName: kargo-demo-test
-      appNamespace: argocd
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: default-promote
+          as: promote-to-test
+          vars:
+          - name: repoURL
+            value: https://github.com/christianh814/kargo-simple-demo
+          - name: sourceBranch
+            value: main
+          - name: targetBranch
+            value: test
+          - name: image
+            value: ghcr.io/christianh814/kargo-demo-app
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -52,13 +124,21 @@ spec:
     sources:
       stages:
       - test
-  promotionMechanisms:
-    gitRepoUpdates:
-    - repoURL: https://github.com/christianh814/kargo-simple-demo
-      writeBranch: stage/uat
-    argoCDAppUpdates:
-    - appName: kargo-demo-uat
-      appNamespace: argocd
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: default-promote
+          as: promote-to-uat
+          vars:
+          - name: repoURL
+            value: https://github.com/christianh814/kargo-simple-demo
+          - name: sourceBranch
+            value: main
+          - name: targetBranch
+            value: uat
+          - name: image
+            value: ghcr.io/christianh814/kargo-demo-app
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
@@ -75,10 +155,18 @@ spec:
     sources:
       stages:
       - uat
-  promotionMechanisms:
-    gitRepoUpdates:
-    - repoURL: https://github.com/christianh814/kargo-simple-demo
-      writeBranch: stage/prod
-    argoCDAppUpdates:
-    - appName: kargo-demo-prod
-      appNamespace: argocd
+  promotionTemplate:
+    spec:
+      steps:
+      - task:
+          name: default-promote
+          as: promote-to-prod
+          vars:
+          - name: repoURL
+            value: https://github.com/christianh814/kargo-simple-demo
+          - name: sourceBranch
+            value: main
+          - name: targetBranch
+            value: prod
+          - name: image
+            value: ghcr.io/christianh814/kargo-demo-app
