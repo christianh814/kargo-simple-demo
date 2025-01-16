@@ -23,7 +23,9 @@ metadata:
 spec:
   vars:
   - name: repoURL
+    value: https://github.com/christianh814/kargo-simple-demo
   - name: sourceBranch
+    value: main
   - name: targetBranch
 
   steps:
@@ -90,10 +92,6 @@ spec:
   promotionTemplate:
     spec:
       vars:
-      - name: repoURL
-        value: https://github.com/christianh814/kargo-simple-demo
-      - name: sourceBranch
-        value: main
       - name: targetBranch
         value: test
       steps:
@@ -119,10 +117,6 @@ spec:
   promotionTemplate:
     spec:
       vars:
-      - name: repoURL
-        value: https://github.com/christianh814/kargo-simple-demo
-      - name: sourceBranch
-        value: main
       - name: targetBranch
         value: uat
       steps:
@@ -148,10 +142,6 @@ spec:
   promotionTemplate:
     spec:
       vars:
-      - name: repoURL
-        value: https://github.com/christianh814/kargo-simple-demo
-      - name: sourceBranch
-        value: main
       - name: targetBranch
         value: prod
       steps:
