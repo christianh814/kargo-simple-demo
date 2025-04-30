@@ -5,7 +5,7 @@ metadata:
     app: gobg
   name: gobg
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gobg
@@ -16,7 +16,7 @@ spec:
         app: gobg
     spec:
       containers:
-      - image: christianh814/gobg:latest
+      - image: christianh814/gobg:green
         name: gobg
         resources: {}
 ---
