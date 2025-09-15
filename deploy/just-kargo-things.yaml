@@ -51,11 +51,16 @@ spec:
       path: ./src/app/stages/${{ vars.targetBranch }}
       outPath: ./dst/${{ vars.targetBranch }}.yaml
 
+  - uses: compose-output
+    as: kustomize-build-msg
+    config:
+      msg: ${{ vars.targetBranch }}.yaml
+
   - uses: git-commit
     as: commit
     config:
       path: ./dst
-      message: ${{ outputs['kustomize-build'].commitMessage }}
+      ###message: ${{ task.outputs['kustomize-build-msg'].msg }}
 
   - uses: git-push
     as: push
