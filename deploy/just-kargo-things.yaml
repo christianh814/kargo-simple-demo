@@ -61,6 +61,7 @@ spec:
     config:
       path: ./dst
       ###message: ${{ task.outputs['kustomize-build-msg'].msg }}
+      message: "updated"
 
   - uses: git-push
     as: push
