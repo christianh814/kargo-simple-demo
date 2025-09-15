@@ -2,7 +2,6 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Project
 metadata:
   name: kargo-demo
-spec: {}
 ---
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
@@ -56,8 +55,7 @@ spec:
     as: commit
     config:
       path: ./dst
-      messageFromSteps:
-      - build-manifests
+      message: ${{ outputs['kustomize-build'].commitMessage }}
 
   - uses: git-push
     as: push
