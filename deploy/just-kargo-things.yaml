@@ -54,14 +54,13 @@ spec:
   - uses: compose-output
     as: kustomize-build-msg
     config:
-      msg: ${{ vars.targetBranch }}.yaml
+      msg: ${{ vars.targetBranch }}
 
   - uses: git-commit
     as: commit
     config:
       path: ./dst
-      ###message: ${{ task.outputs['kustomize-build-msg'].msg }}
-      message: "updated"
+      message: ${{ task.outputs['kustomize-build-msg'].msg }}
 
   - uses: git-push
     as: push
